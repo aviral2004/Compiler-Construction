@@ -451,7 +451,8 @@ tokenInfo getNextToken(twinBuffer buffer)
             }
             if (curr_state->token != TK_NOTOKEN)
             {
-                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, buffer->line_count, keyword);
+                int lc = (curr_state->state_id == RAND_60) ? buffer->line_count - 1 : buffer->line_count;
+                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, lc, keyword);
                 tokens->token_count++;
             }
             curr_state = &states[START];
@@ -562,8 +563,9 @@ tokenInfo getNextToken(twinBuffer buffer)
                 tokens->token_count++;
             }
             if (curr_state->token != TK_NOTOKEN)
-            {
-                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, buffer->line_count, keyword);
+            {   
+                int lc = (curr_state->state_id == RAND_60) ? buffer->line_count - 1 : buffer->line_count;
+                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, lc, keyword);
                 tokens->token_count++;
             }
             curr_state = &states[START];
