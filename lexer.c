@@ -164,36 +164,36 @@ void initialize_states()
         states[i].transitions = NULL;
     }
     states[INVALID].token = TK_INVALID;
-    states[S_1].token = TK_COMMENT;
-    states[S_2].token = TK_NOTOKEN;
+    states[RAND_60].token = TK_COMMENT;
+    states[RAND_61].token = TK_NOTOKEN;
     states[S_3].token = TK_NOTOKEN;
     states[S_43].token = TK_NOTOKEN;
     states[S_45].token = TK_NOTOKEN;
-    states[S_60].token = TK_NOTOKEN;
-    states[S_4].token = TK_NOT;
-    states[S_5].token = TK_SQL;
-    states[S_6].token = TK_SQR;
-    states[S_7].token = TK_COMMA;
-    states[S_8].token = TK_SEM;
-    states[S_9].token = TK_COLON;
-    states[S_10].token = TK_DOT;
-    states[S_11].token = TK_OP;
-    states[S_12].token = TK_CL;
-    states[S_14].token = TK_EQ;
-    states[S_15].token = TK_PLUS;
-    states[S_16].token = TK_MINUS;
-    states[S_18].token = TK_NE;
-    states[S_21].token = TK_OR;
-    states[S_24].token = TK_AND;
+    states[RAND_61].token = TK_NOTOKEN;
+    states[RAND_19].token = TK_NOT;
+    states[RAND_1].token = TK_SQL;
+    states[RAND_2].token = TK_SQR;
+    states[RAND_3].token = TK_COMMA;
+    states[RAND_4].token = TK_SEM;
+    states[RAND_5].token = TK_COLON;
+    states[RAND_6].token = TK_DOT;
+    states[RAND_7].token = TK_OP;
+    states[RAND_8].token = TK_CL;
+    states[RAND_21].token = TK_EQ;
+    states[RAND_9].token = TK_PLUS;
+    states[RAND_10].token = TK_MINUS;
+    states[RAND_23].token = TK_NE;
+    states[RAND_18].token = TK_OR;
+    states[RAND_15].token = TK_AND;
     states[S_27].token = TK_RUID;
-    states[S_28].token = TK_MUL;
+    states[RAND_11].token = TK_MUL;
     states[S_30].token = TK_GT;
     states[S_31].token = TK_GE;
     states[S_33].token = TK_LT;
     states[S_34].token = TK_LE;
     states[S_36].token = TK_LT;
     states[S_38].token = TK_ASSIGNOP;
-    states[S_39].token = TK_DIV;
+    states[RAND_12].token = TK_DIV;
     states[S_49].token = TK_ID;
     states[S_51].token = TK_NUM;
     states[S_55].token = TK_RNUM;
@@ -215,18 +215,18 @@ void initialize_states()
 // Initializes the transitions of the DFA
 void initialize_transitions()
 {
-    add_transition(START, (transition[]){f('%', S_0), f(' ', S_2), f('\n', S_3), f('~', S_4), f('[', S_5), f(']', S_6), f(',', S_7), f(';', S_8), f(':', S_9), f('.', S_10), f('(', S_11), f(')', S_12), f('=', S_13), f('+', S_15), f('-', S_16), f('!', S_17), f('@', S_19), f('&', S_22), f('#', S_25), f('*', S_28), f('>', S_29), f('<', S_32), f('/', S_39), f('_', S_40), f('\t', S_60)}, 25);
+    add_transition(START, (transition[]){f('%', RAND_59), f(' ', RAND_61), f('\n', S_3), f('~', RAND_19), f('[', RAND_1), f(']', RAND_2), f(',', RAND_3), f(';', RAND_4), f(':', RAND_5), f('.', RAND_6), f('(', RAND_7), f(')', RAND_8), f('=', RAND_20), f('+', RAND_9), f('-', RAND_10), f('!', RAND_22), f('@', RAND_16), f('&', RAND_13), f('#', S_25), f('*', RAND_11), f('>', S_29), f('<', S_32), f('/', RAND_12), f('_', S_40), f('\t', RAND_61)}, 25);
     add_transition(START, bToD(S_46), 3);
     add_transition(START, zeroToNine(S_50), 10);
     add_transition(START, aToZExceptBToD(S_44), 23);
-    add_transition(S_0, (transition[]){f('\n', S_1)}, 1);
-    theta(S_0, S_0);
-    add_transition(S_13, (transition[]){f('=', S_14)}, 1);
-    add_transition(S_17, (transition[]){f('=', S_18)}, 1);
-    add_transition(S_19, (transition[]){f('@', S_20)}, 1);
-    add_transition(S_20, (transition[]){f('@', S_21)}, 1);
-    add_transition(S_22, (transition[]){f('&', S_23)}, 1);
-    add_transition(S_23, (transition[]){f('&', S_24)}, 1);
+    add_transition(RAND_59, (transition[]){f('\n', RAND_60)}, 1);
+    theta(RAND_59, RAND_59);
+    add_transition(RAND_20, (transition[]){f('=', RAND_21)}, 1);
+    add_transition(RAND_22, (transition[]){f('=', RAND_23)}, 1);
+    add_transition(RAND_16, (transition[]){f('@', RAND_17)}, 1);
+    add_transition(RAND_17, (transition[]){f('@', RAND_18)}, 1);
+    add_transition(RAND_13, (transition[]){f('&', RAND_14)}, 1);
+    add_transition(RAND_14, (transition[]){f('&', RAND_15)}, 1);
     add_transition(S_25, aToZ(S_26), 26);
     add_transition(S_26, aToZ(S_26), 26);
     theta(S_26, S_27);
@@ -423,7 +423,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         if (curr_state->token != -1)
         {
             memset(keyword, '\0', 100);
-            if (curr_state->state_id == S_1){
+            if (curr_state->state_id == RAND_60){
                 keyword[0] = '%';
             }
             else{
@@ -527,7 +527,7 @@ tokenInfo getNextToken(twinBuffer buffer)
 
             memset(keyword, '\0', 100);
             // comment
-            if (curr_state->state_id == S_1){
+            if (curr_state->state_id == RAND_60){
                 keyword[0] = '%';   
             }
             else {
@@ -574,7 +574,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         memset(buffer->secondary_buffer, '\0', MAX_BUFFER_SIZE);
     }
 
-    if (curr_state == &states[S_0])
+    if (curr_state == &states[RAND_59])
     {
         strncpy(buffer->secondary_buffer, "%", 1);
         buffer->secondary_buffer_index = 1;
