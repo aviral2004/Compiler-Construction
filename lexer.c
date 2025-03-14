@@ -164,7 +164,7 @@ void initialize_states()
         states[i].transitions = NULL;
     }
     states[INVALID].token = TK_INVALID;
-    states[S_1].token = TK_NOTOKEN;
+    states[S_1].token = TK_COMMENT;
     states[S_2].token = TK_NOTOKEN;
     states[S_3].token = TK_NOTOKEN;
     states[S_43].token = TK_NOTOKEN;
@@ -423,7 +423,12 @@ tokenInfo getNextToken(twinBuffer buffer)
         if (curr_state->token != -1)
         {
             memset(keyword, '\0', 100);
-            strncpy(keyword, buffer->secondary_buffer + till - token_len + 1, token_len);
+            if (curr_state->state_id == S_1){
+                keyword[0] = '%';
+            }
+            else{
+                strncpy(keyword, buffer->secondary_buffer + till - token_len + 1, token_len);
+            }
             if (curr_state->state_id == S_43 || curr_state->state_id == S_45)
             {
                 token_id tk = search(look_up_table, keyword);
@@ -521,14 +526,20 @@ tokenInfo getNextToken(twinBuffer buffer)
         {
 
             memset(keyword, '\0', 100);
-            if (token_len > buffer->primary_buffer_index + 1)
-            {
-                strncpy(keyword, buffer->secondary_buffer, token_len - buffer->primary_buffer_index - 1);
-                strncpy(keyword + token_len - buffer->primary_buffer_index - 1, buffer->primary_buffer, buffer->primary_buffer_index + 1);
+            // comment
+            if (curr_state->state_id == S_1){
+                keyword[0] = '%';   
             }
-            else
-            {
-                strncpy(keyword, buffer->primary_buffer + buffer->primary_buffer_index - token_len + 1, token_len);
+            else {
+                if (token_len > buffer->primary_buffer_index + 1)
+                {
+                    strncpy(keyword, buffer->secondary_buffer, token_len - buffer->primary_buffer_index - 1);
+                    strncpy(keyword + token_len - buffer->primary_buffer_index - 1, buffer->primary_buffer, buffer->primary_buffer_index + 1);
+                }
+                else
+                {
+                    strncpy(keyword, buffer->primary_buffer + buffer->primary_buffer_index - token_len + 1, token_len);
+                }
             }
             if (curr_state->state_id == S_43 || curr_state->state_id == S_45)
             {

@@ -46,5 +46,8 @@ clean:
 		@rm -f *.o exec
 		@rm -f *.o 
 
+make rand:
+	make clean && make compile && make run
+
 # Compile, run and clean
 all: compile run clean
