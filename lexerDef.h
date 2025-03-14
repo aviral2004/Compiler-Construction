@@ -83,11 +83,12 @@ typedef enum state_id
     RAND_54,
     RAND_55,
     RAND_56,
-    RANK_57,
+    RAND_57,
     // ?? 
+    RAND_58,
     RAND_59,
     RAND_60,
-    
+
     RAND_61,
     RAND_62,
     // RAND_61, // repeated state for space and tab in bhandari code

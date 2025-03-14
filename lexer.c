@@ -194,21 +194,23 @@ void initialize_states()
     states[RAND_33].token = TK_LT;
     states[RAND_31].token = TK_ASSIGNOP;
     states[RAND_12].token = TK_DIV;
-    states[RANK_57].token = TK_ID;
+    states[RAND_57].token = TK_ID;
     states[RAND_38].token = TK_NUM;
     states[RAND_43].token = TK_RNUM;
     states[RAND_47].token = TK_RNUM;
     states[RAND_40].token = TK_NUM;
+    states[RAND_58].token = TK_FIELDID;
     states[RAND_36].retract_count = 1;
     states[RAND_26].retract_count = 1;
     states[RAND_32].retract_count = 1;
     states[RAND_33].retract_count = 2;
     states[RAND_51].retract_count = 1;
     states[RAND_54].retract_count = 1;
-    states[RANK_57].retract_count = 1;
+    states[RAND_57].retract_count = 1;
     states[RAND_38].retract_count = 1;
     states[RAND_43].retract_count = 1;
     states[RAND_40].retract_count = 2;
+    states[RAND_58].retract_count = 1;
     states[INVALID].retract_count = 1;
 }
 
@@ -249,9 +251,9 @@ void initialize_transitions()
     add_transition(RAND_52, twoToSeven(RAND_55), 6);
     add_transition(RAND_55, bToD(RAND_55), 3);
     add_transition(RAND_55, twoToSeven(RAND_56), 6);
-    theta(RAND_55, RANK_57);
+    theta(RAND_55, RAND_57);
     add_transition(RAND_56, twoToSeven(RAND_56), 6);
-    theta(RAND_56, RANK_57);
+    theta(RAND_56, RAND_57);
     add_transition(RAND_37, (transition[]){f('.', RAND_39)}, 1);
     add_transition(RAND_37, zeroToNine(RAND_37), 10);
     theta(RAND_37, RAND_38);
@@ -264,6 +266,7 @@ void initialize_transitions()
     add_transition(RAND_44, zeroToNine(RAND_46), 10);
     add_transition(RAND_46, zeroToNine(RAND_47), 10);
     add_transition(RAND_45, zeroToNine(RAND_46), 10);
+    theta(RAND_52, RAND_58);
 }
 
 // Initializes the lookup table with the keywords and their respective tokens
