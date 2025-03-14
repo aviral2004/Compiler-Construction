@@ -551,6 +551,14 @@ parseTree *parseInputSourceCode(table T, FirstAndFollow F, grammer *G, vector in
     // parse the input using the parse table and print the parse tree
     // if the input is not valid then print "Input is not valid"
 
+    vector filteredv = init_vector();
+    for (int i = 0; i < input->size; i++){
+        if (get(input, i)->tk != TK_COMMENT){
+            push_back(filteredv, get(input, i));
+        }
+    }
+    input = filteredv;
+    
     // Define the stack
     int n = input->size;
     int stack[100];
