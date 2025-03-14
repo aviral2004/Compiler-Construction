@@ -166,9 +166,9 @@ void initialize_states()
     states[INVALID].token = TK_INVALID;
     states[RAND_60].token = TK_COMMENT;
     states[RAND_61].token = TK_NOTOKEN;
-    states[S_3].token = TK_NOTOKEN;
-    states[S_43].token = TK_NOTOKEN;
-    states[S_45].token = TK_NOTOKEN;
+    states[RAND_62].token = TK_NOTOKEN;
+    states[RAND_51].token = TK_NOTOKEN;
+    states[RAND_54].token = TK_NOTOKEN;
     states[RAND_61].token = TK_NOTOKEN;
     states[RAND_19].token = TK_NOT;
     states[RAND_1].token = TK_SQL;
@@ -194,7 +194,7 @@ void initialize_states()
     states[RAND_33].token = TK_LT;
     states[RAND_31].token = TK_ASSIGNOP;
     states[RAND_12].token = TK_DIV;
-    states[S_49].token = TK_ID;
+    states[RANK_57].token = TK_ID;
     states[RAND_38].token = TK_NUM;
     states[RAND_43].token = TK_RNUM;
     states[RAND_47].token = TK_RNUM;
@@ -203,9 +203,9 @@ void initialize_states()
     states[RAND_26].retract_count = 1;
     states[RAND_32].retract_count = 1;
     states[RAND_33].retract_count = 2;
-    states[S_43].retract_count = 1;
-    states[S_45].retract_count = 1;
-    states[S_49].retract_count = 1;
+    states[RAND_51].retract_count = 1;
+    states[RAND_54].retract_count = 1;
+    states[RANK_57].retract_count = 1;
     states[RAND_38].retract_count = 1;
     states[RAND_43].retract_count = 1;
     states[RAND_40].retract_count = 2;
@@ -215,10 +215,10 @@ void initialize_states()
 // Initializes the transitions of the DFA
 void initialize_transitions()
 {
-    add_transition(START, (transition[]){f('%', RAND_59), f(' ', RAND_61), f('\n', S_3), f('~', RAND_19), f('[', RAND_1), f(']', RAND_2), f(',', RAND_3), f(';', RAND_4), f(':', RAND_5), f('.', RAND_6), f('(', RAND_7), f(')', RAND_8), f('=', RAND_20), f('+', RAND_9), f('-', RAND_10), f('!', RAND_22), f('@', RAND_16), f('&', RAND_13), f('#', RAND_34), f('*', RAND_11), f('>', RAND_24), f('<', RAND_27), f('/', RAND_12), f('_', S_40), f('\t', RAND_61)}, 25);
-    add_transition(START, bToD(S_46), 3);
+    add_transition(START, (transition[]){f('%', RAND_59), f(' ', RAND_61), f('\n', RAND_62), f('~', RAND_19), f('[', RAND_1), f(']', RAND_2), f(',', RAND_3), f(';', RAND_4), f(':', RAND_5), f('.', RAND_6), f('(', RAND_7), f(')', RAND_8), f('=', RAND_20), f('+', RAND_9), f('-', RAND_10), f('!', RAND_22), f('@', RAND_16), f('&', RAND_13), f('#', RAND_34), f('*', RAND_11), f('>', RAND_24), f('<', RAND_27), f('/', RAND_12), f('_', RAND_48), f('\t', RAND_61)}, 25);
+    add_transition(START, bToD(RAND_52), 3);
     add_transition(START, zeroToNine(RAND_37), 10);
-    add_transition(START, aToZExceptBToD(S_44), 23);
+    add_transition(START, aToZExceptBToD(RAND_53), 23);
     add_transition(RAND_59, (transition[]){f('\n', RAND_60)}, 1);
     theta(RAND_59, RAND_59);
     add_transition(RAND_20, (transition[]){f('=', RAND_21)}, 1);
@@ -237,21 +237,21 @@ void initialize_transitions()
     add_transition(RAND_29, (transition[]){f('-', RAND_30)}, 1);
     theta(RAND_29, RAND_33);
     add_transition(RAND_30, (transition[]){f('-', RAND_31)}, 1);
-    add_transition(S_40, AToZ(S_41), 52);
-    add_transition(S_41, AToZ(S_41), 52);
-    add_transition(S_41, zeroToNine(S_42), 10);
-    theta(S_41, S_43);
-    add_transition(S_42, zeroToNine(S_42), 10);
-    theta(S_42, S_43);
-    add_transition(S_44, aToZ(S_44), 26);
-    theta(S_44, S_45);
-    add_transition(S_46, aToZ(S_44), 26);
-    add_transition(S_46, twoToSeven(S_47), 6);
-    add_transition(S_47, bToD(S_47), 3);
-    add_transition(S_47, twoToSeven(S_48), 6);
-    theta(S_47, S_49);
-    add_transition(S_48, twoToSeven(S_48), 6);
-    theta(S_48, S_49);
+    add_transition(RAND_48, AToZ(RAND_49), 52);
+    add_transition(RAND_49, AToZ(RAND_49), 52);
+    add_transition(RAND_49, zeroToNine(RAND_50), 10);
+    theta(RAND_49, RAND_51);
+    add_transition(RAND_50, zeroToNine(RAND_50), 10);
+    theta(RAND_50, RAND_51);
+    add_transition(RAND_53, aToZ(RAND_53), 26);
+    theta(RAND_53, RAND_54);
+    add_transition(RAND_52, aToZ(RAND_53), 26);
+    add_transition(RAND_52, twoToSeven(RAND_55), 6);
+    add_transition(RAND_55, bToD(RAND_55), 3);
+    add_transition(RAND_55, twoToSeven(RAND_56), 6);
+    theta(RAND_55, RANK_57);
+    add_transition(RAND_56, twoToSeven(RAND_56), 6);
+    theta(RAND_56, RANK_57);
     add_transition(RAND_37, (transition[]){f('.', RAND_39)}, 1);
     add_transition(RAND_37, zeroToNine(RAND_37), 10);
     theta(RAND_37, RAND_38);
@@ -370,7 +370,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == S_43 && token_len > 30)
+        if (curr_state->token == RAND_51 && token_len > 30)
         {
             err_type = 3;
             curr_state = &states[INVALID];
@@ -429,7 +429,7 @@ tokenInfo getNextToken(twinBuffer buffer)
             else{
                 strncpy(keyword, buffer->secondary_buffer + till - token_len + 1, token_len);
             }
-            if (curr_state->state_id == S_43 || curr_state->state_id == S_45)
+            if (curr_state->state_id == RAND_51 || curr_state->state_id == RAND_54)
             {
                 token_id tk = search(look_up_table, keyword);
                 if (tk == TK_INVALID)
@@ -467,7 +467,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == S_43 && token_len > 30)
+        if (curr_state->token == RAND_51 && token_len > 30)
         {
 
             err_type = 3;
@@ -541,7 +541,7 @@ tokenInfo getNextToken(twinBuffer buffer)
                     strncpy(keyword, buffer->primary_buffer + buffer->primary_buffer_index - token_len + 1, token_len);
                 }
             }
-            if (curr_state->state_id == S_43 || curr_state->state_id == S_45)
+            if (curr_state->state_id == RAND_51 || curr_state->state_id == RAND_54)
             {
                 token_id tk = search(look_up_table, keyword);
                 if (tk == TK_INVALID)
