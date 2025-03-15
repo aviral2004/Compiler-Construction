@@ -12,8 +12,8 @@ ID:	2022A7PS0052P			Name: Utkarsh Tiwari
 static State states[MAX_STATES];
 static trie look_up_table;
 
-// create a new transition
-transition f(char ch, state_id next_state)
+// Creates a new state transition with given character and next state
+transition create_transition(char ch, state_id next_state)
 {
     transition t = (transition)malloc(sizeof(Transition));
     t->next_state = &states[next_state];
@@ -21,123 +21,123 @@ transition f(char ch, state_id next_state)
     return t;
 }
 
-// create a transition for a to z except b to d
+// Helper function to create transitions for alphabets
 transition *aToZExceptBToD(state_id next_state)
 {
     int size = 23;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 'a'; i <= 'z'; i++)
     {
         if (i != 'b' && i != 'c' && i != 'd')
         {
-            transitions[j++] = f(i, next_state);
+            transitions[idx++] = create_transition(i, next_state);
         }
     }
     return transitions;
 }
 
-// create a transition for a to z
+// Creates transitions for all lowercase letters
 transition *aToZ(state_id next_state)
 {
     int size = 26;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 'a'; i <= 'z'; i++)
     {
-        transitions[j++] = f(i, next_state);
+        transitions[idx++] = create_transition(i, next_state);
     }
     return transitions;
 }
 
-// create a transition for A to Z
+// Creates transitions for all letters (case insensitive)
 transition *AToZ(state_id next_state)
 {
     int size = 52;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 'a'; i <= 'z'; i++)
     {
-        transitions[j++] = f(i, next_state);
+        transitions[idx++] = create_transition(i, next_state);
     }
     for (int i = 'A'; i <= 'Z'; i++)
     {
-        transitions[j++] = f(i, next_state);
+        transitions[idx++] = create_transition(i, next_state);
     }
     return transitions;
 }
 
-// create a transition for b to d
+// Creates transitions for letters b through d
 transition *bToD(state_id next_state)
 {
     int size = 3;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 'b'; i <= 'd'; i++)
     {
-        transitions[j++] = f(i, next_state);
+        transitions[idx++] = create_transition(i, next_state);
     }
     return transitions;
 }
 
-// create a transition for 0 to 9
+// Creates transitions for digits 0-9
 transition *zeroToNine(state_id next_state)
 {
     int size = 10;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 0; i < 10; i++)
     {
-        transitions[j++] = f(i + '0', next_state);
+        transitions[idx++] = create_transition(i + '0', next_state);
     }
     return transitions;
 }
 
-// create a transition for 2 to 7
+// Creates transitions for digits 2-7
 transition *twoToSeven(state_id next_state)
 {
     int size = 6;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
-    int j = 0;
+    int idx = 0;
     for (int i = 0; i < 6; i++)
     {
-        transitions[j++] = f(i + '2', next_state);
+        transitions[idx++] = create_transition(i + '2', next_state);
     }
     return transitions;
 }
 
-// Add remaining transitions to the graph
+// Adds remaining transitions to complete the state graph
 void theta(state_id curr_state, state_id next_state)
 {
     int size = ALPHABET_SIZE - states[curr_state].length;
     transition *transitions = (transition *)malloc(size * sizeof(transition));
     int count = 0;
-    int *freq = (int *)calloc(128, sizeof(int));
+    int *char_used = (int *)calloc(128, sizeof(int));
     for (int j = 0; j < states[curr_state].length; j++)
     {
-        freq[states[curr_state].transitions[j]->next_char] = 1;
+        char_used[states[curr_state].transitions[j]->next_char] = 1;
     }
     for (int i = 0; i < ALPHABET_SIZE; i++)
     {
-        if (freq[ALPHABETS[i]] != 1)
+        if (char_used[ALPHABETS[i]] != 1)
         {
-            transitions[count++] = f(ALPHABETS[i], next_state);
+            transitions[count++] = create_transition(ALPHABETS[i], next_state);
         }
     }
     add_transition(curr_state, transitions, size);
+    free(char_used);
 }
 
-
-// Returns a New Token with a given token_id, line count and lexeme
-token getNewToken(token_id id, int lc, char *lexeme)
+// Creates a new token with given properties
+token create_token(token_id id, int line_count, char *lexeme)
 {
-    token newToken = (token)malloc(sizeof(Token));
-    newToken->tk = id;
-    newToken->lc = lc;
-    newToken->lexeme = (char *)(malloc(30 * sizeof(char)));
-    memset(newToken->lexeme, '\0', 30);
-    strncpy(newToken->lexeme, lexeme, strlen(lexeme));
-    return newToken;
+    token new_token = (token)malloc(sizeof(Token));
+    new_token->tk = id;
+    new_token->lc = line_count;
+    new_token->lexeme = (char *)(malloc(30 * sizeof(char)));
+    memset(new_token->lexeme, '\0', 30);
+    strncpy(new_token->lexeme, lexeme, strlen(lexeme));
+    return new_token;
 }
 
 // Adds transitions to the state
@@ -152,9 +152,17 @@ void add_transition(state_id state, transition *transitions, int transition_coun
     states[state].length = new_length;
 }
 
-// Initializes the states of the DFA
-void initialize_states()
+// Initialize the lexical analyzer components
+void initialize_lexer() {
+    setupStates();
+    setupTransitions();
+    setupLookupTable();
+}
+
+// Initialize all states with default values and token mappings
+void setupStates()
 {
+    // Set default values for all states
     for (int i = 0; i < MAX_STATES; i++)
     {
         states[i].length = 0;
@@ -163,144 +171,173 @@ void initialize_states()
         states[i].token = -1;
         states[i].transitions = NULL;
     }
+
+    // Initialize special states
     states[INVALID].token = TK_INVALID;
-    states[RAND_60].token = TK_COMMENT;
-    states[RAND_61].token = TK_NOTOKEN;
-    states[RAND_62].token = TK_NOTOKEN;
-    states[RAND_51].token = TK_NOTOKEN;
-    states[RAND_54].token = TK_NOTOKEN;
-    states[RAND_61].token = TK_NOTOKEN;
-    states[RAND_19].token = TK_NOT;
-    states[RAND_1].token = TK_SQL;
-    states[RAND_2].token = TK_SQR;
-    states[RAND_3].token = TK_COMMA;
-    states[RAND_4].token = TK_SEM;
-    states[RAND_5].token = TK_COLON;
-    states[RAND_6].token = TK_DOT;
-    states[RAND_7].token = TK_OP;
-    states[RAND_8].token = TK_CL;
-    states[RAND_21].token = TK_EQ;
-    states[RAND_9].token = TK_PLUS;
-    states[RAND_10].token = TK_MINUS;
-    states[RAND_23].token = TK_NE;
-    states[RAND_18].token = TK_OR;
-    states[RAND_15].token = TK_AND;
-    states[RAND_36].token = TK_RUID;
-    states[RAND_11].token = TK_MUL;
-    states[RAND_26].token = TK_GT;
-    states[RAND_25].token = TK_GE;
-    states[RAND_32].token = TK_LT;
-    states[RAND_28].token = TK_LE;
-    states[RAND_33].token = TK_LT;
-    states[RAND_31].token = TK_ASSIGNOP;
-    states[RAND_12].token = TK_DIV;
-    states[RAND_57].token = TK_ID;
-    states[RAND_38].token = TK_NUM;
-    states[RAND_43].token = TK_RNUM;
-    states[RAND_47].token = TK_RNUM;
-    states[RAND_40].token = TK_NUM;
-    states[RAND_58].token = TK_FIELDID;
-    states[RAND_36].retract_count = 1;
-    states[RAND_26].retract_count = 1;
-    states[RAND_32].retract_count = 1;
-    states[RAND_33].retract_count = 2;
-    states[RAND_51].retract_count = 1;
-    states[RAND_54].retract_count = 1;
-    states[RAND_57].retract_count = 1;
-    states[RAND_38].retract_count = 1;
-    states[RAND_43].retract_count = 1;
-    states[RAND_40].retract_count = 2;
-    states[RAND_58].retract_count = 1;
     states[INVALID].retract_count = 1;
+
+    // Initialize comment and whitespace states
+    states[STATE_60].token = TK_COMMENT;
+    states[STATE_61].token = TK_NOTOKEN;
+    states[STATE_62].token = TK_NOTOKEN;
+
+    // Initialize identifier states
+    states[STATE_51].token = TK_NOTOKEN;
+    states[STATE_54].token = TK_NOTOKEN;
+    states[STATE_57].token = TK_ID;
+    states[STATE_58].token = TK_FIELDID;
+
+    // Initialize operator states
+    states[STATE_19].token = TK_NOT;
+    states[STATE_21].token = TK_EQ;
+    states[STATE_23].token = TK_NE;
+    states[STATE_18].token = TK_OR;
+    states[STATE_15].token = TK_AND;
+    states[STATE_31].token = TK_ASSIGNOP;
+
+    // Initialize arithmetic operator states
+    states[STATE_9].token = TK_PLUS;
+    states[STATE_10].token = TK_MINUS;
+    states[STATE_11].token = TK_MUL;
+    states[STATE_12].token = TK_DIV;
+
+    // Initialize relational operator states
+    states[STATE_26].token = TK_GT;
+    states[STATE_25].token = TK_GE;
+    states[STATE_32].token = TK_LT;
+    states[STATE_28].token = TK_LE;
+    states[STATE_33].token = TK_LT;
+
+    // Initialize delimiter states
+    states[STATE_1].token = TK_SQL;
+    states[STATE_2].token = TK_SQR;
+    states[STATE_3].token = TK_COMMA;
+    states[STATE_4].token = TK_SEM;
+    states[STATE_5].token = TK_COLON;
+    states[STATE_6].token = TK_DOT;
+    states[STATE_7].token = TK_OP;
+    states[STATE_8].token = TK_CL;
+
+    // Initialize number states
+    states[STATE_38].token = TK_NUM;
+    states[STATE_40].token = TK_NUM;
+    states[STATE_43].token = TK_RNUM;
+    states[STATE_47].token = TK_RNUM;
+
+    // Initialize special identifier states
+    states[STATE_36].token = TK_RUID;
+
+    // Set retract counts
+    states[STATE_36].retract_count = 1;
+    states[STATE_26].retract_count = 1;
+    states[STATE_32].retract_count = 1;
+    states[STATE_33].retract_count = 2;
+    states[STATE_51].retract_count = 1;
+    states[STATE_54].retract_count = 1;
+    states[STATE_57].retract_count = 1;
+    states[STATE_38].retract_count = 1;
+    states[STATE_43].retract_count = 1;
+    states[STATE_40].retract_count = 2;
+    states[STATE_58].retract_count = 1;
 }
 
 // Initializes the transitions of the DFA
-void initialize_transitions()
+void setupTransitions()
 {
-    add_transition(START, (transition[]){f('%', RAND_59), f(' ', RAND_61), f('\n', RAND_62), f('~', RAND_19), f('[', RAND_1), f(']', RAND_2), f(',', RAND_3), f(';', RAND_4), f(':', RAND_5), f('.', RAND_6), f('(', RAND_7), f(')', RAND_8), f('=', RAND_20), f('+', RAND_9), f('-', RAND_10), f('!', RAND_22), f('@', RAND_16), f('&', RAND_13), f('#', RAND_34), f('*', RAND_11), f('>', RAND_24), f('<', RAND_27), f('/', RAND_12), f('_', RAND_48), f('\t', RAND_61)}, 25);
-    add_transition(START, bToD(RAND_52), 3);
-    add_transition(START, zeroToNine(RAND_37), 10);
-    add_transition(START, aToZExceptBToD(RAND_53), 23);
-    add_transition(RAND_59, (transition[]){f('\n', RAND_60)}, 1);
-    theta(RAND_59, RAND_59);
-    add_transition(RAND_20, (transition[]){f('=', RAND_21)}, 1);
-    add_transition(RAND_22, (transition[]){f('=', RAND_23)}, 1);
-    add_transition(RAND_16, (transition[]){f('@', RAND_17)}, 1);
-    add_transition(RAND_17, (transition[]){f('@', RAND_18)}, 1);
-    add_transition(RAND_13, (transition[]){f('&', RAND_14)}, 1);
-    add_transition(RAND_14, (transition[]){f('&', RAND_15)}, 1);
-    add_transition(RAND_34, aToZ(RAND_35), 26);
-    add_transition(RAND_35, aToZ(RAND_35), 26);
-    theta(RAND_35, RAND_36);
-    add_transition(RAND_24, (transition[]){f('=', RAND_25)}, 1);
-    theta(RAND_24, RAND_26);
-    add_transition(RAND_27, (transition[]){f('=', RAND_28), f('-', RAND_29)}, 2);
-    theta(RAND_27, RAND_32);
-    add_transition(RAND_29, (transition[]){f('-', RAND_30)}, 1);
-    theta(RAND_29, RAND_33);
-    add_transition(RAND_30, (transition[]){f('-', RAND_31)}, 1);
-    add_transition(RAND_48, AToZ(RAND_49), 52);
-    add_transition(RAND_49, AToZ(RAND_49), 52);
-    add_transition(RAND_49, zeroToNine(RAND_50), 10);
-    theta(RAND_49, RAND_51);
-    add_transition(RAND_50, zeroToNine(RAND_50), 10);
-    theta(RAND_50, RAND_51);
-    add_transition(RAND_53, aToZ(RAND_53), 26);
-    theta(RAND_53, RAND_54);
-    add_transition(RAND_52, aToZ(RAND_53), 26);
-    add_transition(RAND_52, twoToSeven(RAND_55), 6);
-    add_transition(RAND_55, bToD(RAND_55), 3);
-    add_transition(RAND_55, twoToSeven(RAND_56), 6);
-    theta(RAND_55, RAND_57);
-    add_transition(RAND_56, twoToSeven(RAND_56), 6);
-    theta(RAND_56, RAND_57);
-    add_transition(RAND_37, (transition[]){f('.', RAND_39)}, 1);
-    add_transition(RAND_37, zeroToNine(RAND_37), 10);
-    theta(RAND_37, RAND_38);
-    add_transition(RAND_39, zeroToNine(RAND_41), 10);
-    theta(RAND_39, RAND_40);
-    add_transition(RAND_41, zeroToNine(RAND_42), 10);
-    add_transition(RAND_42, (transition[]){f('E', RAND_44)}, 1);
-    theta(RAND_42, RAND_43);
-    add_transition(RAND_44, (transition[]){f('+', RAND_45), f('-', RAND_45)}, 2);
-    add_transition(RAND_44, zeroToNine(RAND_46), 10);
-    add_transition(RAND_46, zeroToNine(RAND_47), 10);
-    add_transition(RAND_45, zeroToNine(RAND_46), 10);
-    theta(RAND_52, RAND_58);
+    add_transition(START, (transition[]){create_transition('%', STATE_59), create_transition(' ', STATE_61), create_transition('\n', STATE_62), create_transition('~', STATE_19), create_transition('[', STATE_1), create_transition(']', STATE_2), create_transition(',', STATE_3), create_transition(';', STATE_4), create_transition(':', STATE_5), create_transition('.', STATE_6), create_transition('(', STATE_7), create_transition(')', STATE_8), create_transition('=', STATE_20), create_transition('+', STATE_9), create_transition('-', STATE_10), create_transition('!', STATE_22), create_transition('@', STATE_16), create_transition('&', STATE_13), create_transition('#', STATE_34), create_transition('*', STATE_11), create_transition('>', STATE_24), create_transition('<', STATE_27), create_transition('/', STATE_12), create_transition('_', STATE_48), create_transition('\t', STATE_61)}, 25);
+    add_transition(START, bToD(STATE_52), 3);
+    add_transition(START, zeroToNine(STATE_37), 10);
+    add_transition(START, aToZExceptBToD(STATE_53), 23);
+    add_transition(STATE_59, (transition[]){create_transition('\n', STATE_60)}, 1);
+    theta(STATE_59, STATE_59);
+    add_transition(STATE_20, (transition[]){create_transition('=', STATE_21)}, 1);
+    add_transition(STATE_22, (transition[]){create_transition('=', STATE_23)}, 1);
+    add_transition(STATE_16, (transition[]){create_transition('@', STATE_17)}, 1);
+    add_transition(STATE_17, (transition[]){create_transition('@', STATE_18)}, 1);
+    add_transition(STATE_13, (transition[]){create_transition('&', STATE_14)}, 1);
+    add_transition(STATE_14, (transition[]){create_transition('&', STATE_15)}, 1);
+    add_transition(STATE_34, aToZ(STATE_35), 26);
+    add_transition(STATE_35, aToZ(STATE_35), 26);
+    theta(STATE_35, STATE_36);
+    add_transition(STATE_24, (transition[]){create_transition('=', STATE_25)}, 1);
+    theta(STATE_24, STATE_26);
+    add_transition(STATE_27, (transition[]){create_transition('=', STATE_28), create_transition('-', STATE_29)}, 2);
+    theta(STATE_27, STATE_32);
+    add_transition(STATE_29, (transition[]){create_transition('-', STATE_30)}, 1);
+    theta(STATE_29, STATE_33);
+    add_transition(STATE_30, (transition[]){create_transition('-', STATE_31)}, 1);
+    add_transition(STATE_48, AToZ(STATE_49), 52);
+    add_transition(STATE_49, AToZ(STATE_49), 52);
+    add_transition(STATE_49, zeroToNine(STATE_50), 10);
+    theta(STATE_49, STATE_51);
+    add_transition(STATE_50, zeroToNine(STATE_50), 10);
+    theta(STATE_50, STATE_51);
+    add_transition(STATE_53, aToZ(STATE_53), 26);
+    theta(STATE_53, STATE_54);
+    add_transition(STATE_52, aToZ(STATE_53), 26);
+    add_transition(STATE_52, twoToSeven(STATE_55), 6);
+    add_transition(STATE_55, bToD(STATE_55), 3);
+    add_transition(STATE_55, twoToSeven(STATE_56), 6);
+    theta(STATE_55, STATE_57);
+    add_transition(STATE_56, twoToSeven(STATE_56), 6);
+    theta(STATE_56, STATE_57);
+    add_transition(STATE_37, (transition[]){create_transition('.', STATE_39)}, 1);
+    add_transition(STATE_37, zeroToNine(STATE_37), 10);
+    theta(STATE_37, STATE_38);
+    add_transition(STATE_39, zeroToNine(STATE_41), 10);
+    theta(STATE_39, STATE_40);
+    add_transition(STATE_41, zeroToNine(STATE_42), 10);
+    add_transition(STATE_42, (transition[]){create_transition('E', STATE_44)}, 1);
+    theta(STATE_42, STATE_43);
+    add_transition(STATE_44, (transition[]){create_transition('+', STATE_45), create_transition('-', STATE_45)}, 2);
+    add_transition(STATE_44, zeroToNine(STATE_46), 10);
+    add_transition(STATE_46, zeroToNine(STATE_47), 10);
+    add_transition(STATE_45, zeroToNine(STATE_46), 10);
+    theta(STATE_52, STATE_58);
 }
 
-// Initializes the lookup table with the keywords and their respective tokens
-void initialize_lookup_table()
+// Initialize the lookup table with language keywords
+void setupLookupTable()
 {
     look_up_table = getTrieNode();
+    
+    // Control flow keywords
+    insert(look_up_table, "if", TK_IF);
+    insert(look_up_table, "else", TK_ELSE);
+    insert(look_up_table, "endif", TK_ENDIF);
+    insert(look_up_table, "while", TK_WHILE);
+    insert(look_up_table, "endwhile", TK_ENDWHILE);
+
+    // Function and parameter keywords
+    insert(look_up_table, "_main", TK_MAIN);
+    insert(look_up_table, "call", TK_CALL);
     insert(look_up_table, "with", TK_WITH);
     insert(look_up_table, "parameters", TK_PARAMETERS);
-    insert(look_up_table, "end", TK_END);
-    insert(look_up_table, "while", TK_WHILE);
+    insert(look_up_table, "parameter", TK_PARAMETER);
+    insert(look_up_table, "input", TK_INPUT);
+    insert(look_up_table, "output", TK_OUTPUT);
+    insert(look_up_table, "global", TK_GLOBAL);
+    insert(look_up_table, "return", TK_RETURN);
+
+    // Type-related keywords
+    insert(look_up_table, "type", TK_TYPE);
+    insert(look_up_table, "int", TK_INT);
+    insert(look_up_table, "real", TK_REAL);
+    insert(look_up_table, "list", TK_LIST);
+    insert(look_up_table, "record", TK_RECORD);
+    insert(look_up_table, "endrecord", TK_ENDRECORD);
     insert(look_up_table, "union", TK_UNION);
     insert(look_up_table, "endunion", TK_ENDUNION);
     insert(look_up_table, "definetype", TK_DEFINETYPE);
     insert(look_up_table, "as", TK_AS);
-    insert(look_up_table, "type", TK_TYPE);
-    insert(look_up_table, "_main", TK_MAIN);
-    insert(look_up_table, "global", TK_GLOBAL);
-    insert(look_up_table, "parameter", TK_PARAMETER);
-    insert(look_up_table, "list", TK_LIST);
-    insert(look_up_table, "input", TK_INPUT);
-    insert(look_up_table, "output", TK_OUTPUT);
-    insert(look_up_table, "int", TK_INT);
-    insert(look_up_table, "real", TK_REAL);
-    insert(look_up_table, "endwhile", TK_ENDWHILE);
-    insert(look_up_table, "if", TK_IF);
-    insert(look_up_table, "then", TK_THEN);
-    insert(look_up_table, "endif", TK_ENDIF);
+
+    // I/O keywords
     insert(look_up_table, "read", TK_READ);
     insert(look_up_table, "write", TK_WRITE);
-    insert(look_up_table, "return", TK_RETURN);
-    insert(look_up_table, "call", TK_CALL);
-    insert(look_up_table, "record", TK_RECORD);
-    insert(look_up_table, "endrecord", TK_ENDRECORD);
-    insert(look_up_table, "else", TK_ELSE);
+
+    // Block keywords
+    insert(look_up_table, "end", TK_END);
+    insert(look_up_table, "then", TK_THEN);
 }
 
 // Returns the Lexical Token List of the file
@@ -311,7 +348,7 @@ vector getStream(FILE *fp)
         printf("Error: File not found\n");
         exit(1);
     }
-    twinBuffer buffer = (twinBuffer)malloc(sizeof(struct TwinBuffer));
+    dualBuffer buffer = (dualBuffer)malloc(sizeof(struct DualBuffer));
     buffer->secondary_buffer_index = 0;
     buffer->line_count = 1;
     FILE *new_fp = fopen("lexical_tokens.salad", "w");
@@ -340,8 +377,8 @@ vector getStream(FILE *fp)
     return v;
 }
 
-// Returns the list of next tokens from the twin-buffer
-tokenInfo getNextToken(twinBuffer buffer)
+// Returns the list of next tokens from the dual-buffer
+tokenInfo getNextToken(dualBuffer buffer)
 {
     state curr_state = &states[START];
     state prev_state = NULL;
@@ -373,7 +410,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == RAND_51 && token_len > 30)
+        if (curr_state->token == STATE_51 && token_len > 30)
         {
             err_type = 3;
             curr_state = &states[INVALID];
@@ -415,7 +452,7 @@ tokenInfo getNextToken(twinBuffer buffer)
                     sprintf(keyword, "Unknown Pattern <%s>", invalid_token);
                 }
             }
-            tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, buffer->line_count, keyword);
+            tokens->tokens[tokens->token_count] = create_token(curr_state->token, buffer->line_count, keyword);
             tokens->token_count++;
             token_len = 0;
             curr_state = &states[START];
@@ -426,13 +463,13 @@ tokenInfo getNextToken(twinBuffer buffer)
         if (curr_state->token != -1)
         {
             memset(keyword, '\0', 100);
-            if (curr_state->state_id == RAND_60){
+            if (curr_state->state_id == STATE_60){
                 keyword[0] = '%';
             }
             else{
                 strncpy(keyword, buffer->secondary_buffer + till - token_len + 1, token_len);
             }
-            if (curr_state->state_id == RAND_51 || curr_state->state_id == RAND_54)
+            if (curr_state->state_id == STATE_51 || curr_state->state_id == STATE_54)
             {
                 token_id tk = search(look_up_table, keyword);
                 if (tk == TK_INVALID)
@@ -446,13 +483,13 @@ tokenInfo getNextToken(twinBuffer buffer)
                         tk = TK_FIELDID;
                     }
                 }
-                tokens->tokens[tokens->token_count] = getNewToken(tk, buffer->line_count, keyword);
+                tokens->tokens[tokens->token_count] = create_token(tk, buffer->line_count, keyword);
                 tokens->token_count++;
             }
             if (curr_state->token != TK_NOTOKEN)
             {
-                int lc = (curr_state->state_id == RAND_60) ? buffer->line_count - 1 : buffer->line_count;
-                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, lc, keyword);
+                int lc = (curr_state->state_id == STATE_60) ? buffer->line_count - 1 : buffer->line_count;
+                tokens->tokens[tokens->token_count] = create_token(curr_state->token, lc, keyword);
                 tokens->token_count++;
             }
             curr_state = &states[START];
@@ -471,7 +508,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == RAND_51 && token_len > 30)
+        if (curr_state->token == STATE_51 && token_len > 30)
         {
 
             err_type = 3;
@@ -514,7 +551,7 @@ tokenInfo getNextToken(twinBuffer buffer)
                     sprintf(keyword, "Unknown Pattern <%s>", invalid_token);
                 }
             }
-            tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, buffer->line_count, keyword);
+            tokens->tokens[tokens->token_count] = create_token(curr_state->token, buffer->line_count, keyword);
             tokens->token_count++;
             buffer->primary_buffer_index++;
             buffer->primary_buffer_index += next;
@@ -531,7 +568,7 @@ tokenInfo getNextToken(twinBuffer buffer)
 
             memset(keyword, '\0', 100);
             // comment
-            if (curr_state->state_id == RAND_60){
+            if (curr_state->state_id == STATE_60){
                 keyword[0] = '%';   
             }
             else {
@@ -545,7 +582,7 @@ tokenInfo getNextToken(twinBuffer buffer)
                     strncpy(keyword, buffer->primary_buffer + buffer->primary_buffer_index - token_len + 1, token_len);
                 }
             }
-            if (curr_state->state_id == RAND_51 || curr_state->state_id == RAND_54)
+            if (curr_state->state_id == STATE_51 || curr_state->state_id == STATE_54)
             {
                 token_id tk = search(look_up_table, keyword);
                 if (tk == TK_INVALID)
@@ -559,13 +596,13 @@ tokenInfo getNextToken(twinBuffer buffer)
                         tk = TK_FIELDID;
                     }
                 }
-                tokens->tokens[tokens->token_count] = getNewToken(tk, buffer->line_count, keyword);
+                tokens->tokens[tokens->token_count] = create_token(tk, buffer->line_count, keyword);
                 tokens->token_count++;
             }
             if (curr_state->token != TK_NOTOKEN)
             {   
-                int lc = (curr_state->state_id == RAND_60) ? buffer->line_count - 1 : buffer->line_count;
-                tokens->tokens[tokens->token_count] = getNewToken(curr_state->token, lc, keyword);
+                int lc = (curr_state->state_id == STATE_60) ? buffer->line_count - 1 : buffer->line_count;
+                tokens->tokens[tokens->token_count] = create_token(curr_state->token, lc, keyword);
                 tokens->token_count++;
             }
             curr_state = &states[START];
@@ -579,7 +616,7 @@ tokenInfo getNextToken(twinBuffer buffer)
         memset(buffer->secondary_buffer, '\0', MAX_BUFFER_SIZE);
     }
 
-    if (curr_state == &states[RAND_59])
+    if (curr_state == &states[STATE_59])
     {
         strncpy(buffer->secondary_buffer, "%", 1);
         buffer->secondary_buffer_index = 1;
@@ -631,7 +668,7 @@ void removeComments(char *testcaseFile, char *cleanFile)
     FILE *clean_fp = fopen(cleanFile, "w");
     if (testcase_fp == NULL)
     {
-        printf("Error: Test Case File not found\n");
+        printf("Error: The Test Case File Input was invalid, File not found\n");
         exit(1);
     }
     if (clean_fp == NULL)

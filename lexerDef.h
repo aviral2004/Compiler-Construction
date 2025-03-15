@@ -22,76 +22,74 @@ static const char *const TOKENS[] = {"program", "mainFunction", "otherFunctions"
 
 typedef enum state_id
 {
-    RAND_1,
-    RAND_2,
-    RAND_3,
-    RAND_4,
-    RAND_5,
-    RAND_6,
-    RAND_7,
-    RAND_8,
-    RAND_9,
-    RAND_10,
+    STATE_1,
+    STATE_2,
+    STATE_3,
+    STATE_4,
+    STATE_5,
+    STATE_6,
+    STATE_7,
+    STATE_8,
+    STATE_9,
+    STATE_10,
 
-    RAND_11,
-    RAND_12,
-    RAND_13,
-    RAND_14,
-    RAND_15,
-    RAND_16,
-    RAND_17,
-    RAND_18,
-    RAND_19,
-    RAND_20,
+    STATE_11,
+    STATE_12,
+    STATE_13,
+    STATE_14,
+    STATE_15,
+    STATE_16,
+    STATE_17,
+    STATE_18,
+    STATE_19,
+    STATE_20,
 
-    RAND_21,
-    RAND_22,
-    RAND_23,
-    RAND_24,
-    RAND_25,
-    RAND_26,
-    RAND_27,
-    RAND_28,
-    RAND_29,
-    RAND_30,
+    STATE_21,
+    STATE_22,
+    STATE_23,
+    STATE_24,
+    STATE_25,
+    STATE_26,
+    STATE_27,
+    STATE_28,
+    STATE_29,
+    STATE_30,
 
-    RAND_31,
-    RAND_32,
-    RAND_33,
-    RAND_34,
-    RAND_35,
-    RAND_36,
-    RAND_37,
-    RAND_38,
-    RAND_39,
-    RAND_40,
+    STATE_31,
+    STATE_32,
+    STATE_33,
+    STATE_34,
+    STATE_35,
+    STATE_36,
+    STATE_37,
+    STATE_38,
+    STATE_39,
+    STATE_40,
 
-    RAND_41,
-    RAND_42,
-    RAND_43,
-    RAND_44,
-    RAND_45,
-    RAND_46,
-    RAND_47,
-    RAND_48,
-    RAND_49,
-    RAND_50,
+    STATE_41,
+    STATE_42,
+    STATE_43,
+    STATE_44,
+    STATE_45,
+    STATE_46,
+    STATE_47,
+    STATE_48,
+    STATE_49,
+    STATE_50,
 
-    RAND_51,
-    RAND_52,
-    RAND_53,
-    RAND_54,
-    RAND_55,
-    RAND_56,
-    RAND_57,
-    // ?? 
-    RAND_58,
-    RAND_59,
-    RAND_60,
+    STATE_51,
+    STATE_52,
+    STATE_53,
+    STATE_54,
+    STATE_55,
+    STATE_56,
+    STATE_57,
+    STATE_58,
+    STATE_59,
+    STATE_60,
 
-    RAND_61,
-    RAND_62,
-    // RAND_61, // repeated state for space and tab in bhandari code
+    STATE_61,
+    STATE_62,
     START,
     INVALID,
 } state_id; // Enum for state ids
@@ -214,27 +212,13 @@ typedef enum token_id
     TK_EPSILON
 } token_id; // Enum for token ids
 
-typedef struct TwinBuffer
-{
-    char primary_buffer[MAX_BUFFER_SIZE];
-    char secondary_buffer[MAX_BUFFER_SIZE];
-    int primary_buffer_index;
-    int secondary_buffer_index;
-    int line_count;
-} TwinBuffer;
-
+// Core token and state management structures
 typedef struct Token
 {
     token_id tk;
     int lc;
     char *lexeme;
 } Token;
-
-typedef struct TokenInfo
-{
-    struct Token **tokens;
-    int token_count;
-} TokenInfo;
 
 typedef struct State
 {
@@ -251,11 +235,29 @@ typedef struct Transition
     struct State *next_state;
 } Transition;
 
-typedef struct State *state;           // Pointer to a state
-typedef struct Transition *transition; // Pointer to a transition
-typedef struct TwinBuffer *twinBuffer; // Pointer to a twin buffer
-typedef struct TokenInfo *tokenInfo;   // Pointer to a token info
-typedef struct Token *token;           // Pointer to a token
+// Buffer management for lexical analysis
+typedef struct DualBuffer
+{
+    char primary_buffer[MAX_BUFFER_SIZE];   // Main buffer for current processing
+    char secondary_buffer[MAX_BUFFER_SIZE]; // Overflow buffer for token spanning reads
+    int primary_buffer_index;               // Current position in primary buffer
+    int secondary_buffer_index;             // Current position in secondary buffer
+    int line_count;                        // Current line number being processed
+} DualBuffer;
+
+// Token collection and management
+typedef struct TokenInfo
+{
+    struct Token **tokens;    // Array of tokens found
+    int token_count;         // Number of tokens processed
+} TokenInfo;
+
+// Type definitions for pointer management
+typedef struct State *state;           
+typedef struct Transition *transition; 
+typedef struct DualBuffer *dualBuffer;  
+typedef struct TokenInfo *tokenInfo;   
+typedef struct Token *token;           
 
 // Array of states for the graph
 

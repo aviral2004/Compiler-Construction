@@ -18,9 +18,9 @@ int main()
 
     // Initialize the states, transitions and lookup table
     white("Initializing the states, transitions and lookup table\n");
-    initialize_states();
-    initialize_transitions();
-    initialize_lookup_table();
+    setupStates();
+    setupTransitions();
+    setupLookupTable();
     green("Initialization done\n");
 
     // Initialize the grammer
