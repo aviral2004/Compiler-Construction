@@ -351,14 +351,6 @@ vector getStream(FILE *fp)
     dualBuffer buffer = (dualBuffer)malloc(sizeof(struct DualBuffer));
     buffer->secondary_buffer_index = 0;
     buffer->line_count = 1;
-    FILE *new_fp = fopen("lexical_tokens.tokens", "w");
-    if (new_fp == NULL)
-    {
-        printf("Error: Could not create a new file\n");
-        exit(1);
-    }
-    fprintf(new_fp, "%-30s %-30s %s\n", "Line", "Lexeme", "Token");
-    fprintf(new_fp, "%-30s %-30s %s\n", "----", "------", "-----");
 
     vector v = init_vector();
     while (fgets(buffer->primary_buffer, MAX_BUFFER_SIZE, fp) != NULL)
@@ -367,12 +359,10 @@ vector getStream(FILE *fp)
         for (int i = 0; i < info->token_count; i++)
         {
             push_back(v, info->tokens[i]);
-            fprintf(new_fp, "%-30d %-30s %s\n", info->tokens[i]->lc, info->tokens[i]->lexeme, TOKENS[info->tokens[i]->tk]);
         }
         free(info);
     }
     fclose(fp);
-    fclose(new_fp);
     free(buffer);
     return v;
 }

@@ -34,20 +34,10 @@ vector.o: vector.c vector.h
 
 # Compile all the .o files
 compile: driver.o lexer.o parser.o utils.o trie.o vector.o
-		@gcc -o exec driver.o lexer.o parser.o utils.o trie.o vector.o
+		@gcc -o stage1exe driver.o lexer.o parser.o utils.o trie.o vector.o
 		@rm *.o
-
-# Run the executable
-run: exec
-		@./exec 
 
 # Clean the .o files and the executable
 clean:
 		@rm -f *.o exec
 		@rm -f *.o 
-
-make rand:
-	make clean && make compile && make run
-
-# Compile, run and clean
-all: compile run clean
