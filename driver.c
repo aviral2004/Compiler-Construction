@@ -15,7 +15,8 @@ ID:	2022A7PS0052P			Name: Utkarsh Tiwari
 
 int main()
 {
-
+    white("Status of work:\n");
+    green("FIRST and FOLLOW Automated\nBoth lexical and syntax analysis module implemented\n")
     // Initialize the states, transitions and lookup table
     white("Initializing the states, transitions and lookup table\n");
     setupStates();
@@ -23,10 +24,10 @@ int main()
     setupLookupTable();
     green("Initialization done\n");
 
-    // Initialize the grammer
-    white("Initializing the grammer\n");
-    grammer G;
-    grammer_init(&G);
+    // Initialize the grammar
+    white("Initializing the grammar\n");
+    grammar G;
+    init(&G);
     green("Initialization done\n");
 
     // Compute first and follow sets
