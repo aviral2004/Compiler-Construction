@@ -634,7 +634,7 @@ parseTree *parseInputSourceCode(table parseTable, FirstAndFollow firstFollowSets
         // Handle invalid tokens
         if (get(tokenStream, currentPos)->tk == TK_INVALID || terminalIdx == -2)
         {
-            red("Line %d Error: %s\n", get(tokenStream, currentPos)->lc, get(tokenStream, currentPos)->lexeme);
+            printf("Line %d Error: %s\n", get(tokenStream, currentPos)->lc, get(tokenStream, currentPos)->lexeme);
             currentPos++;
             errorControl = 0;
             hasError = 1;
@@ -645,7 +645,7 @@ parseTree *parseInputSourceCode(table parseTable, FirstAndFollow firstFollowSets
         if (nonTerminalIdx == -2)
         {
             if (errorControl)
-                red("Line %d Error: The token %s for lexeme %s does not match with the expected token %s\n", 
+                printf("Line %d Error: The token %s for lexeme %s does not match with the expected token %s\n", 
                     get(tokenStream, currentPos)->lc, 
                     TOKENS[get(tokenStream, currentPos)->tk], 
                     get(tokenStream, currentPos)->lexeme, 
@@ -661,7 +661,7 @@ parseTree *parseInputSourceCode(table parseTable, FirstAndFollow firstFollowSets
         if (parseTable.table[nonTerminalIdx][terminalIdx] == INT_MIN)
         {
             if (errorControl)
-                red("Line %d Error: Invalid token %s encountered with %s stack top %s\n", 
+                printf("Line %d Error: Invalid token %s encountered with %s stack top %s\n", 
                     get(tokenStream, currentPos)->lc, 
                     TOKENS[get(tokenStream, currentPos)->tk], 
                     get(tokenStream, currentPos)->lexeme, 
@@ -676,7 +676,7 @@ parseTree *parseInputSourceCode(table parseTable, FirstAndFollow firstFollowSets
         if (parseTable.table[nonTerminalIdx][terminalIdx] == INT_MAX)
         {
             if (errorControl)
-                red("Line %d Error: Invalid token %s encountered with %s stack top %s\n", 
+                printf("Line %d Error: Invalid token %s encountered with %s stack top %s\n", 
                     get(tokenStream, currentPos)->lc, 
                     TOKENS[get(tokenStream, currentPos)->tk], 
                     get(tokenStream, currentPos)->lexeme, 
@@ -744,11 +744,11 @@ parseTree *parseInputSourceCode(table parseTable, FirstAndFollow firstFollowSets
     // Check for successful parse
     if (symbolStack[symbolTop] == TK_DOLLAR && hasError == 0)
     {
-        green("COMPILATION SUCCESSFUL \n");
+        printf("COMPILATION SUCCESSFUL \n");
     }
     else
     {
-        red("COMPILATION ERROR\n");
+        printf("COMPILATION ERROR\n");
     }
     return rootNode;
 }

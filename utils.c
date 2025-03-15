@@ -16,7 +16,7 @@ bool append_endline(char *file_name)
     FILE *fp = fopen(file_name, "r");
     if (fp == NULL)
     {
-        cyan("File not found\n");
+        printf("File not found\n");
         return 0;
     }
     fseek(fp, -1, SEEK_END);
