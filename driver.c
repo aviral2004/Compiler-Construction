@@ -55,7 +55,7 @@ int main()
         {
         case 0:
             // Exit the program
-            printf("Thank you for using SALAD compiler.\n");
+            printf("Process terminated successfully.\n");
             return 0;
         case 1:
             // Remove comments from the input file
