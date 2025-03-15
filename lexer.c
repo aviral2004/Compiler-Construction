@@ -351,7 +351,7 @@ vector getStream(FILE *fp)
     dualBuffer buffer = (dualBuffer)malloc(sizeof(struct DualBuffer));
     buffer->secondary_buffer_index = 0;
     buffer->line_count = 1;
-    FILE *new_fp = fopen("lexical_tokens.salad", "w");
+    FILE *new_fp = fopen("lexical_tokens.tokens", "w");
     if (new_fp == NULL)
     {
         printf("Error: Could not create a new file\n");
