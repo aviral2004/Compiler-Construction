@@ -410,7 +410,7 @@ tokenInfo getNextToken(dualBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == STATE_51 && token_len > 30)
+        if (curr_state->state_id == TK_FUNID && token_len > 30)
         {
             err_type = 3;
             curr_state = &states[INVALID];
@@ -508,7 +508,7 @@ tokenInfo getNextToken(dualBuffer buffer)
         {
             buffer->line_count++;
         }
-        if (curr_state->token == STATE_51 && token_len > 30)
+        if (curr_state->state_id == STATE_51 && token_len > 30)
         {
 
             err_type = 3;
